@@ -1,6 +1,7 @@
 # Personal Development Environment
 
-![macOS](https://img.shields.io/badge/os-macOS-lightgrey?logo=apple)[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+![macOS](https://img.shields.io/badge/os-macOS-lightgrey?logo=apple)
+[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 [![semantic-release](https://github.com/thms317/personal-development-environment/actions/workflows/semantic-release.yml/badge.svg)](https://github.com/thms317/personal-development-environment/actions/workflows/semantic-release.yml)
 
 Guidelines for setting up my personal development environment.
