@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### 📚 Documentation
+
+- Update README
+
 ## [1.0.1] - 2024-11-08
 
 ### 🐛 Bug Fixes
