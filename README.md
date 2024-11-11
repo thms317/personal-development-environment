@@ -8,38 +8,55 @@ Guidelines for setting up my personal development environment.
 
 ## Getting Started
 
+### System settings
+
+- **Key repeat rate**: 'fast'
+- **Delay until repeat**: 'short'
+- **Hot Corners**: set the top right corner to 'Desktop'
+
 ### Essential tools
 
-1. Visual Studio Code
+1. [Visual Studio Code](https://code.visualstudio.com/)
    - include `extensions.json`
    - include `settings.json`
-2. iTerm2
-3. Brew
-   - do not forget to add to `PATH`
-4. Oh My Zsh
-   - include `git`
-   - include `zsh-autosuggestions`
-   - include `zsh-syntax-highlighting`
-   - install [`mcfly`](https://github.com/cantino/mcfly)
-5. Display Link Manager
-6. CopyLess 2
-7. noTunes
+2. Configure Terminal
+   - [iTerm2](https://iterm2.com/)
+   - [Oh My Zsh](https://ohmyz.sh/)
+      - include [`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md#homebrew) plugin
 
-### Nice to have
+         ```bash
+         git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions`
+         ```
 
-Usually these tools will automatically be installed when you start developing.
+      - include [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md) plugin
 
-1. [`.vscode`](https://github.com/thms317/personal-development-environment/.vscode) settings and extensions
-2. [`Poetry`](https://python-poetry.org/)
-3. [`uv`](https://docs.astral.sh/uv/)
-4. [`Databricks CLI`](https://docs.databricks.com/dev-tools/cli/index.html)
-   - configure `.databrickscfg`
-5. [`JetBrains Mono`](https://www.jetbrains.com/lp/mono/)
-6. [`Pydantic`](https://docs.pydantic.dev)
-7. [`Polars`](https://pola.rs/)
-8. [`Loguru`](https://loguru.readthedocs.io/en/stable/)
+         ```bash
+         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+         ```
+
+   - [McFly](https://github.com/cantino/mcfly)
+   - [Homebrew](https://brew.sh/)
+   - [JetBrains Mono](https://www.jetbrains.com/lp/mono/)
+      - set as default font in iTerm2
+      - set as default font in VSCode
+3. [DisplayLink](https://www.synaptics.com/products/displaylink-graphics/downloads/macos)
+4. [CopyLess 2](https://copyless.net/)
+5. [noTunes](https://formulae.brew.sh/cask/notunes)
+
+Add the relevant tools to login items.
+
+## Shell Configuration
+
+Example configurations of [`.zshrc`](config/.zshrc) and [`.zprofile`](config/.zprofile) can be found in the [`config`](config) folder.
 
 ### Install Personal Scripts
+
+Use `brew` to install the following tools:
+
+```bash
+brew install jq
+brew install tree
+```
 
 Place the following scripts in the `"$HOME/scripts/` folder.
 
@@ -55,52 +72,18 @@ chmod +x $HOME/scripts/cleanup_branches.sh
 chmod +x $HOME/scripts/angular_commit_generator.sh
 ```
 
-## Shell Configuration
+### Nice to have
 
-### `.zshrc`
+Usually these tools will automatically be installed when you start developing.
 
-```bash
-# Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-
-# Set oh-my-zsh theme
-ZSH_THEME="agnoster"
-
-# Configure oh-my-zsh plugins
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
-
-# Initialize oh-my-zsh
-source $ZSH/oh-my-zsh.sh
-
-# Configure prompt (minimal)
-prompt_context() {}
-
-# Configure prompt (with random emojis)
-prompt_context() {
-  emojis=("⚡️" "🔥" "💀" "👑" "😎" "🐸" "🐵" "🦄" "🌈" "🍻" "🚀" "💡" "🎉" "🔑" "🇹🇭" "🚦" "🌙")
-  RAND_EMOJI_N=$(( $RANDOM % ${#emojis[@]} + 1))
-  prompt_segment black default "${emojis[$RAND_EMOJI_N]} "
-}
-
-# Configure McFly
-eval "$(mcfly init zsh)"
-```
-
-### `.zprofile`
-
-```bash
-# XF0RC3R
-alias dc="docker-compose"
-alias up="dc up"
-alias down="dc down"
-alias tf="terraform"
-alias gl="git log --graph --all --decorate"
-
-# Thomas
-alias pr="$HOME/scripts/pr_generator.sh"
-alias clean="$HOME/scripts/cleanup_branches.sh"
-alias cm="$HOME/scripts/angular_commit_generator.sh"
-```
+1. [`.vscode`](https://github.com/thms317/personal-development-environment/.vscode) settings and extensions
+2. [`uv`](https://docs.astral.sh/uv/)
+3. [`Poetry`](https://python-poetry.org/)
+4. [`Databricks CLI`](https://docs.databricks.com/dev-tools/cli/index.html)
+   - configure `.databrickscfg`
+5. [`Pydantic`](https://docs.pydantic.dev)
+6. [`Polars`](https://pola.rs/)
+7. [`Loguru`](https://loguru.readthedocs.io/en/stable/)
 
 ## Things I Built
 
