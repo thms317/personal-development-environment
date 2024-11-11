@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - Update README
 
+### ⚙️ Miscellaneous Tasks
+
+- Add example shell configuration files
+
 ## [1.0.1] - 2024-11-08
 
 ### 🐛 Bug Fixes
