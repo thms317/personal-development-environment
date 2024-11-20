@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [1.0.2] - 2024-11-20
+
+### 🐛 Bug Fixes
+
+- Update cleanup_branches.sh script to account for rebasing rather than merging
 
 ### 📚 Documentation
 
