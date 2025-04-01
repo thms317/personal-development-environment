@@ -16,7 +16,7 @@ Guidelines for setting up my personal development environment.
 
 ### Essential tools
 
-1. [Visual Studio Code](https://code.visualstudio.com/)
+1. [Cursor](https://www.cursor.com/) (formerly known as [Visual Studio Code](https://code.visualstudio.com/))
    - include `extensions.json`
    - include `settings.json`
 2. Configure Terminal
@@ -63,6 +63,7 @@ Place the following scripts in the `"$HOME/scripts/` folder.
 - `pr_generator.sh`
 - `cleanup_branches.sh`
 - `angular_commit_generator.sh`
+- `ttree.sh`
 
 Make these scripts executable by running:
 
@@ -70,6 +71,16 @@ Make these scripts executable by running:
 chmod +x $HOME/scripts/pr_generator.sh
 chmod +x $HOME/scripts/cleanup_branches.sh
 chmod +x $HOME/scripts/angular_commit_generator.sh
+chmod +x $HOME/scripts/ttree.sh
+```
+
+Add the following aliases to your `~/.zprofile` file:
+
+```bash
+alias pr="$HOME/scripts/pr_generator.sh"
+alias clean="$HOME/scripts/cleanup_branches.sh"
+alias cm="$HOME/scripts/angular_commit_generator.sh"
+alias ttree="$HOME/scripts/ttree.sh"
 ```
 
 ### Nice to have
@@ -80,7 +91,6 @@ Usually these tools will automatically be installed when you start developing.
 2. [`uv`](https://docs.astral.sh/uv/)
 3. [`Poetry`](https://python-poetry.org/)
 4. [`Databricks CLI`](https://docs.databricks.com/dev-tools/cli/index.html)
-   - configure `.databrickscfg`
 5. [`Pydantic`](https://docs.pydantic.dev)
 6. [`Polars`](https://pola.rs/)
 7. [`Loguru`](https://loguru.readthedocs.io/en/stable/)
