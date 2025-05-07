@@ -9,7 +9,13 @@ export default {
         changelogFile: "CHANGELOG.md",
       },
     ],
-    "@semantic-release/git",
+    [
+      "@semantic-release/git",
+      {
+        assets: ["CHANGELOG.md"],
+        message: "chore(release): ${nextRelease.version} [skip ci]",
+      },
+    ],
     "@semantic-release/github",
   ],
 };
