@@ -4,7 +4,13 @@
 branch_name=$(git rev-parse --abbrev-ref HEAD)
 
 # List of files and directories to ignore
-ignore_pattern=":(exclude)poetry.lock :(exclude)assets/* :(exclude)archive/* :(exclude)scratch/*"
+ignore_pattern=" \
+    :(exclude)poetry.lock \
+    :(exclude)uv.lock \
+    :(exclude)assets/* \
+    :(exclude)archive/* \
+    :(exclude)scratch/* \
+"
 
 # Get the diff 
 diff_output=$(git diff main...$branch_name $ignore_pattern 2>/dev/null)
@@ -72,7 +78,7 @@ if [ -n "$template_file" ]; then
     echo "Pull request template found: $template_display"
 else
     echo "No pull request template found. Using default structure."
-    pr_template="# Title\n\n## Description\n\n## Checklist\n\n- [ ] Documented\n- [ ] Tested"
+    pr_template="# Title\n\n## Description\n\n## Changes\n\n## Checklist\n\n- [ ] Documented\n- [ ] Tested"
 fi
 
 # Get the file tree (ignoring irrelevant folders)
