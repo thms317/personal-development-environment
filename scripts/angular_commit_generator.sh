@@ -4,67 +4,65 @@
 branch_name=$(git rev-parse --abbrev-ref HEAD)
 
 # List of files and directories to ignore
-ignore_list=(
-    "poetry.lock"
-    "assets/*"
-    "archive/*"
-    "scratch/*"
-)
+ignore_pattern=" \
+    :(exclude)poetry.lock \
+    :(exclude)uv.lock \
+    :(exclude)assets/* \
+    :(exclude)archive/* \
+    :(exclude)scratch/* \
+"
 
-# Build the ignore parameters for git diff
-ignore_params=()
-for ignore in "${ignore_list[@]}"; do
-    ignore_params+=(":!$ignore")
-done
+# Get the diff
+diff_output=$(git diff --cached "origin/$branch_name" $ignore_pattern 2>/dev/null)
 
-# Get the diff (ignoring ignore_list)
-diff_output=$(git diff --cached "origin/$branch_name" "${ignore_params[@]}" 2>/dev/null)
+# Get the list of changed files with line changes
+changed_files=$(git diff --cached --name-only "origin/$branch_name" $ignore_pattern 2>/dev/null)
 
-# Get the list of changed files with line changes (ignoring ignore_list)
-changed_files=$(git diff --cached "origin/$branch_name" --name-only "${ignore_params[@]}" 2>/dev/null)
+# Debug info
+echo "Branch: $branch_name"
+echo "Changed files: $(echo "$changed_files" | wc -l | tr -d ' ')"
+echo "Diff size: $(echo "$diff_output" | wc -l | tr -d ' ') lines"
 
-# Function to safely get line changes for a file
-get_line_changes() {
-    local file="$1"
-    local status="$2"
-    local lines=""
-    
-    if [ "$status" = "A" ]; then
-        lines=$(git diff --cached "origin/$branch_name" --numstat -- "$file" "${ignore_params[@]}" 2>/dev/null | awk '{print $1}')
-    elif [ "$status" = "M" ]; then
-        lines=$(git diff --cached "origin/$branch_name" --numstat -- "$file" "${ignore_params[@]}" 2>/dev/null | awk '{print $1 + $2}')
-    elif [ "$status" = "D" ]; then
-        lines=$(git diff --cached "origin/$branch_name" --numstat -- "$file" "${ignore_params[@]}" 2>/dev/null | awk '{print $2}')
+# Get file status info
+status_output=$(git diff --cached --name-status "origin/$branch_name" $ignore_pattern 2>/dev/null)
+
+# Extract files by status
+new_files=$(echo "$status_output" | grep '^A' | cut -f2 | while read file; do
+    lines=$(git diff --cached --numstat "origin/$branch_name" -- "$file" | awk '{print $1}')
+    if [ -n "$lines" ] && [ "$lines" -gt 0 ]; then
+        echo "$file:$lines"
     fi
-    
-    if [ -z "$lines" ]; then
-        lines=0
+done | sort -t: -k2 -rn)
+
+updated_files=$(echo "$status_output" | grep '^M' | cut -f2 | while read file; do
+    lines=$(git diff --cached --numstat "origin/$branch_name" -- "$file" | awk '{print $1 + $2}')
+    if [ -n "$lines" ] && [ "$lines" -gt 0 ]; then
+        echo "$file:$lines"
     fi
-    echo "$file:$lines"
-}
-
-# Categorize changed files with line counts
-new_files=$(git diff --name-status --cached "origin/$branch_name" "${ignore_params[@]}" 2>/dev/null | grep '^A' | cut -f2 | while read -r file; do
-    get_line_changes "$file" "A"
 done | sort -t: -k2 -rn)
 
-updated_files=$(git diff --name-status --cached "origin/$branch_name" "${ignore_params[@]}" 2>/dev/null | grep '^M' | cut -f2 | while read -r file; do
-    get_line_changes "$file" "M"
+deleted_files=$(echo "$status_output" | grep '^D' | cut -f2 | while read file; do
+    lines=$(git diff --cached --numstat "origin/$branch_name" -- "$file" | awk '{print $2}')
+    if [ -n "$lines" ] && [ "$lines" -gt 0 ]; then
+        echo "$file:$lines"
+    fi
 done | sort -t: -k2 -rn)
 
-deleted_files=$(git diff --name-status --cached "origin/$branch_name" "${ignore_params[@]}" 2>/dev/null | grep '^D' | cut -f2 | while read -r file; do
-    get_line_changes "$file" "D"
-done | sort -t: -k2 -rn)
+# Check if we got any changes
+if [ -z "$changed_files" ]; then
+    echo "WARNING: No changes detected in staged files compared to origin/$branch_name"
+    echo "Make sure you have staged your changes with 'git add' and that origin/$branch_name exists"
+fi
 
-# Format the file changes into a JSON object, filtering out entries with lines_changed equal to 0
+# Format the file changes into a JSON object
 file_changes=$(jq -n \
   --arg new "$new_files" \
   --arg updated "$updated_files" \
   --arg deleted "$deleted_files" \
   '{
-    new_files: ($new | split("\n") | map(select(length > 0) | split(":") | {file: .[0], lines_changed: .[1]|tonumber}) | map(select(.lines_changed > 0))),
-    updated_files: ($updated | split("\n") | map(select(length > 0) | split(":") | {file: .[0], lines_changed: .[1]|tonumber}) | map(select(.lines_changed > 0))),
-    deleted_files: ($deleted | split("\n") | map(select(length > 0) | split(":") | {file: .[0], lines_changed: .[1]|tonumber}) | map(select(.lines_changed > 0)))
+    new_files: ($new | split("\n") | map(select(length > 0) | split(":") | {file: .[0], lines_changed: .[1]|tonumber})),
+    updated_files: ($updated | split("\n") | map(select(length > 0) | split(":") | {file: .[0], lines_changed: .[1]|tonumber})),
+    deleted_files: ($deleted | split("\n") | map(select(length > 0) | split(":") | {file: .[0], lines_changed: .[1]|tonumber}))
   } | with_entries(select(.value != []))')
 
 # Get the file tree (ignoring irrelevant folders)
@@ -115,4 +113,4 @@ jq -n \
     }' > angular_commit_instructions.json
     
    
-echo "Instructions for Angular commit message generation have been saved to angular_commit_instructions.json"
+echo "Instructions for Angular commit message generation have been saved to: angular_commit_instructions.json"
